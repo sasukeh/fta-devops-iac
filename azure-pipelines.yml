@@ -97,7 +97,7 @@ stages:
               namespace: '$(Environment.Name)'
               command: 'install'
               chartType: 'FilePath'
-              chartPath: '$(System.DefaultworkingDirectory)/charts/web'
+              chartPath: '$(Pipeline.Workspace)/charts/web'
               releaseName: '$(Environment.Name)'
 
 - stage: prod
@@ -123,5 +123,5 @@ stages:
               namespace: '$(Environment.Name)'
               command: 'install'
               chartType: 'FilePath'
-              chartPath: '$(System.DefaultworkingDirectory)/charts/web'
+              chartPath: '$(Pipeline.Workspace)/charts/web'
               releaseName: '$(Environment.Name)'
