@@ -14,9 +14,16 @@ variables:
   dockerRegistryServiceConnection: '708ea539-d5df-4542-8b16-d21ffe79f013'
   dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
+  resourceGroup: 'ftadevops-rg'
+  clusterName: 'ftademo'
+  namespaces: 'test,prod'
+  isNewCluster: true
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
+
+pool:
+  vmImage: $(vmImageName)
 
 stages:
 - stage: Build
@@ -24,8 +31,6 @@ stages:
   jobs:  
   - job: Build
     displayName: Build
-    pool:
-      vmImage: $(vmImageName)
     steps:
     - task: Docker@2
       displayName: Build and push an image to container registry
@@ -43,64 +48,80 @@ stages:
         path: $(System.DefaultWorkingDirectory)
         artifact: manifests
 
-- stage: dev
-  displayName: Deploy to dev
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Victor-DevOps'
+        subscriptionId: '$(subscriptionId)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: $(resourceGroup)
+        location: 'Southeast Asia'
+        templateLocation: 'Linked artifact'
+        csmFile: '$(System.DefaultWorkingDirectory)/templates/template.json'
+        csmParametersFile: '$(System.DefaultWorkingDirectory)/templates/parameters.json'
+        overrideParameters: '-clusterName $(clusterName) -doRoleAssignment $(isNewCluster)'
+        deploymentMode: 'Incremental'
+
+    - task: KubectlInstaller@0
+      inputs:
+        kubectlVersion: 'latest'
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Victor-DevOps'
+        scriptType: 'pscore'
+        scriptLocation: 'scriptPath'
+        scriptPath: '$(System.DefaultWorkingDirectory)/scripts/create-namespaces.ps1'
+        arguments: '$(resourceGroup) $(clusterName) $(namespaces)'
+
+- stage: test
+  displayName: Deploy to test
   dependsOn: Build
   jobs:
   - deployment: Deploy
     displayName: Deploy stage
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'fabmedweb.dev'
+    environment: 'test'
     strategy:
       runOnce:
         deploy:
           steps:
-          - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
+          - task: HelmInstaller@1
             inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)              
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
+              helmVersionToInstall: 'latest'
+          - task: HelmDeploy@0
             inputs:
-              action: deploy
-              manifests: |
-                $(Pipeline.Workspace)/manifests/web.deployment.yml
-                $(Pipeline.Workspace)/manifests/web.service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+              connectionType: 'Azure Resource Manager'
+              azureSubscription: 'Victor-DevOps'
+              azureResourceGroup: '$(resourceGroup)'
+              kubernetesCluster: '$(clusterName)'
+              namespace: '$(Environment.Name)'
+              command: 'install'
+              chartType: 'FilePath'
+              chartPath: '$(System.DefaultworkingDirectory)/charts/web'
+              releaseName: '$(Environment.Name)'
 
 - stage: prod
   displayName: Deploy to prod
-  dependsOn: dev
+  dependsOn: test
   jobs:
   - deployment: Deploy
     displayName: Deploy stage
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'fabmedweb.prod'
+    environment: 'prod'
     strategy:
       runOnce:
         deploy:
           steps:
-          - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
+          - task: HelmInstaller@1
             inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)              
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
+              helmVersionToInstall: 'latest'
+          - task: HelmDeploy@0
             inputs:
-              action: deploy
-              manifests: |
-                $(Pipeline.Workspace)/manifests/web.deployment.yml
-                $(Pipeline.Workspace)/manifests/web.service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+              connectionType: 'Azure Resource Manager'
+              azureSubscription: 'Victor-DevOps'
+              azureResourceGroup: '$(resourceGroup)'
+              kubernetesCluster: '$(clusterName)'
+              namespace: '$(Environment.Name)'
+              command: 'install'
+              chartType: 'FilePath'
+              chartPath: '$(System.DefaultworkingDirectory)/charts/web'
+              releaseName: '$(Environment.Name)'
