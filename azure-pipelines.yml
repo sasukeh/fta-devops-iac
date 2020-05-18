@@ -17,7 +17,6 @@ variables:
   resourceGroup: 'ftadevops-rg'
   clusterName: 'ftademo'
   namespaces: 'test,prod'
-  isNewCluster: false
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -73,6 +72,7 @@ stages:
         scriptLocation: 'scriptPath'
         scriptPath: '$(System.DefaultWorkingDirectory)/scripts/create-namespaces.ps1'
         arguments: '$(resourceGroup) $(clusterName) $(namespaces)'
+        powerShellErrorActionPreference: 'silentlyContinue'
 
 - stage: test
   displayName: Deploy to test
