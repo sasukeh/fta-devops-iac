@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "value": "aksdemo"
+        },
+        "location": {
+            "value": "southeastasia"
+        },
+        "dnsPrefix": {
+            "value": "aksdemo-dns"
+        },
+        "kubernetesVersion": {
+            "value": "1.15.10"
+        },
+        "nodeSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "nodeNumber": {
+            "value": 2
+        },
+        "networkPlugin": {
+            "value": "azure"
+        },
+        "enableRBAC": {
+            "value": true
+        },
+        "enablePrivateCluster": {
+            "value": false
+        },
+        "enableHttpApplicationRouting": {
+            "value": true
+        },
+        "vmssNodePool": {
+            "value": true
+        },
+        "serviceCidr": {
+            "value": "10.0.0.0/16"
+        },
+        "dnsServiceIP": {
+            "value": "10.0.0.10"
+        },
+        "dockerBridgeCidr": {
+            "value": "172.17.0.1/16"
+        },
+        "workspaceRegion": {
+            "value": "southeastasia"
+        },
+        "aciConnectorLinuxEnabled": {
+            "value": true
+        },
+        "networkPolicy": {
+            "value": "azure"
+        },
+        "vnetName": {
+            "value": "aksdemo-vnet"
+        },
+        "acrName": {
+            "value": "azninja"
+        },
+        "acrResourceGroup": {
+            "value": "ftademo-rg"
+        }
+    }
+}
