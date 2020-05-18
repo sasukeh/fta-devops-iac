@@ -66,6 +66,7 @@ stages:
         kubectlVersion: 'latest'
 
     - task: AzureCLI@2
+      condition: eq('${{isNewCluster}}', true)
       inputs:
         azureSubscription: 'Victor-DevOps'
         scriptType: 'pscore'
