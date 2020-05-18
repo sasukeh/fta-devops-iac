@@ -17,7 +17,7 @@ variables:
   resourceGroup: 'ftadevops-rg'
   clusterName: 'ftademo'
   namespaces: 'test,prod'
-  isNewCluster: true
+  isNewCluster: false
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
