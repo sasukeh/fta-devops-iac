@@ -72,7 +72,8 @@ stages:
         scriptLocation: 'scriptPath'
         scriptPath: '$(System.DefaultWorkingDirectory)/scripts/create-namespaces.ps1'
         arguments: '$(resourceGroup) $(clusterName) $(namespaces)'
-        powerShellErrorActionPreference: 'silentlyContinue'
+        powerShellErrorActionPreference: 'continue'
+        failOnStandardError: true
 
 - stage: test
   displayName: Deploy to test
