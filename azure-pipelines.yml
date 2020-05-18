@@ -45,7 +45,7 @@ stages:
     - task: PublishPipelineArtifact@1
       inputs:
         path: $(System.DefaultWorkingDirectory)
-        artifact: manifests
+        artifact: artifacts
 
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
@@ -99,7 +99,7 @@ stages:
               namespace: '$(Environment.Name)'
               command: 'install'
               chartType: 'FilePath'
-              chartPath: '$(Pipeline.Workspace)/charts/web'
+              chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
               releaseName: '$(Environment.Name)'
 
 - stage: prod
@@ -125,5 +125,5 @@ stages:
               namespace: '$(Environment.Name)'
               command: 'install'
               chartType: 'FilePath'
-              chartPath: '$(Pipeline.Workspace)/charts/web'
+              chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
               releaseName: '$(Environment.Name)'
