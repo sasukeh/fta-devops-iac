@@ -57,8 +57,8 @@ stages:
         resourceGroupName: $(resourceGroup)
         location: 'Southeast Asia'
         templateLocation: 'Linked artifact'
-        csmFile: '$(System.DefaultWorkingDirectory)/templates/template.json'
-        csmParametersFile: '$(System.DefaultWorkingDirectory)/templates/parameters.json'
+        csmFile: '$(System.DefaultWorkingDirectory)/arm/template.json'
+        csmParametersFile: '$(System.DefaultWorkingDirectory)/arm/parameters.json'
         overrideParameters: '-clusterName $(clusterName) -doRoleAssignment $(isNewCluster)'
         deploymentMode: 'Incremental'
 
