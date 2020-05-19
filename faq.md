@@ -21,11 +21,13 @@ For most situations incremental mode is recommended. It is important to understa
 We recommend [integrate Azure Key Vault](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-tutorial-use-key-vault) in your ARM template deployment. You can store secrets on Azure Key Vault and retrive them as deployment template parameters.
 
 ## How can I run non ARM actions as part of my ARM deployment e.g run a powershell or upload a blob?
+Yes, there is a feature, [deployment scripts in template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-script-template?tabs=CLI) (preview), which allows execution of PowerShell or CLI scripts in template deployments and reviewing of execution results.
 
 ## Should I build using kudu or my pipeline?
 Generally building in a pipline makes more sense. This allows you to adopt a Build once deploy many approach and the only change between environments is some configuration. Building using kudu can be very useful for demo templates where you want to enable others to use your template in a one click deployment.
 
 ## Should I handle complex logic in my template using nested templates and logic operator or should i move it up to powershell or an ochestrator?
+It depends on your preference. ARM template is capable of complex logic and operations.
 
 ## What the best tool for authoring templates?
 This really comes down to personal preference, We commonly use Visual Studio or VSCode as they both have great extensions for navigating, generating and validating templates.
@@ -40,12 +42,13 @@ You can refer to existing resource(s) by Resoure Id. You may use build-in [resou
 Yes, But there requires a deployment to the subscription and not to the resource group. This approach is used in blueprints for example. For less complex deployments you would typically deploy all your resources into one resource group which would be pre provisioned using PowerShell, CLI or Azure Pipelines
 
 ## Can I assign permissions in an arm template
-No
+No. However, by using [deployment scripts in template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-script-template?tabs=CLI) (preview). You can manage users and create objects in Azure AD.
 
 ## How do I share common templates with my team or end users
 There are several options. The portal has a builtin template gallery to share tempaltes across your tennant. You could manage deployents entirely thorough Azure DevOps or another orchestrator. You could build you custom deployment solution using a private repository alternatively Github is a great way for sharing template with external users.
 
-## When should I use blueprints vs standalone ARM templates?
+## When should I use Blueprints vs standalone ARM templates?
+You should start with the standalone ARM templates at the begining. Once feel comfortable wiht the ARM templates, you may move to Blueprints. The Blueprints combined role and policy assignments together with ARM templates and Resource Groups to define a repeatable set of Azure resources that implements and adheres to an organization's standards, patterns, and requirements.
 
 ## Any Anitpatterns I should be aware of?
 
