@@ -23,22 +23,27 @@ We recommend [integrate Azure Key Vault](https://docs.microsoft.com/en-us/azure/
 ## How can I run non ARM actions as part of my ARM deployment e.g run a powershell or upload a blob?
 
 ## Should I build using kudu or my pipeline?
+Generally building in a pipline makes more sense. This allows you to adopt a Build once deploy many approach and the only change between environments is some configuration. Building using kudu can be very useful for demo templates where you want to enable others to use your template in a one click deployment.
 
 ## Should I handle complex logic in my template using nested templates and logic operator or should i move it up to powershell or an ochestrator?
 
 ## What the best tool for authoring templates?
+This really comes down to personal preference, We commonly use Visual Studio or VSCode as they both have great extensions for navigating, generating and validating templates.
 
 ## Where should I start? Create in the portal and export, quickstart templates and modify, or using snippets
+Everyone learns in different ways but we find starting with a combination of quickstart templates and exporting resources from the portal until you become familar is a good way to go
 
 ## How do I manage dependencies against existing resources that are not defined in my template?
 You can refer to existing resource(s) by Resoure Id. You may use build-in [resourceId](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions-resource#resourceid) function for ARM template. You will need scription id and resoure group name of dependent resource.
 
 ## Can I create resource groups with an ARM template?
-No, you cannot create resource group(s) with an ARM template. However, you may do this using PowerShell, CLI or Azure Pipelines
+Yes, But there requires a deployment to the subscription and not to the resource group. This approach is used in blueprints for example. For less complex deployments you would typically deploy all your resources into one resource group which would be pre provisioned using PowerShell, CLI or Azure Pipelines
 
 ## Can I assign permissions in an arm template
+No
 
 ## How do I share common templates with my team or end users
+There are several options. The portal has a builtin template gallery to share tempaltes across your tennant. You could manage deployents entirely thorough Azure DevOps or another orchestrator. You could build you custom deployment solution using a private repository alternatively Github is a great way for sharing template with external users.
 
 ## When should I use blueprints vs standalone ARM templates?
 
