@@ -13,7 +13,12 @@ for namespace in ${NAME_SPACES[@]}; do
 done
 
 # Deploy aad-pod-identity
-kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/master/deploy/infra/mic-exception.yaml
+helm repo add aad-pod-identity https://raw.githubusercontent.com/Azure/aad-pod-identity/master/charts
+helm install aad-pod-identity aad-pod-identity/aad-pod-identity
+
+# Install secrets store csi driver and Azure Key Vault Provider
+$ helm repo add secrets-store-csi-driver https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
+$ helm install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver
 
 az identity create -g $RESOURCE_GROUP -n $IDENTITY_NAME --subscription $SUBSCRIPTION_ID
 

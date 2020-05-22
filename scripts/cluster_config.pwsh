@@ -7,7 +7,12 @@ param (
 az aks get-credentials -n $clusterName -g $resourceGroup
 
 # Deploy aad-pod-identity
-kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/master/deploy/infra/mic-exception.yaml
+helm repo add aad-pod-identity https://raw.githubusercontent.com/Azure/aad-pod-identity/master/charts
+helm install aad-pod-identity aad-pod-identity/aad-pod-identity
+
+# Install secrets store csi driver
+$ helm repo add secrets-store-csi-driver https://raw.githubusercontent.com/kubernetes-sigs/secrets-store-csi-driver/master/charts
+$ helm install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver
 
 foreach ($namespace in $namespaces) {
      # create namespace
