@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "clusterName": {
-            "value": "aksdemo"
+            "value": "aksdevops"
         },
         "location": {
             "value": "southeastasia"
         },
         "dnsPrefix": {
-            "value": "aksdemo-dns"
+            "value": "aksdevops-dns"
         },
         "kubernetesVersion": {
             "value": "1.16.7"
