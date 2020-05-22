@@ -17,7 +17,7 @@ variables:
   resourceGroup: 'ftadevops-rg'
   clusterName: 'aksdevops'
   deployInfra: false
-  isNewCluster: true
+  isNewCluster: false
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -101,7 +101,7 @@ stages:
               command: 'install'
               chartType: 'FilePath'
               chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
-              releaseName: '$(Environment.Name)'
+              releaseName: 'web-$(Environment.Name)-$(Build.BuildNumber)'
           
 
 - stage: uat
@@ -125,7 +125,7 @@ stages:
               command: 'install'
               chartType: 'FilePath'
               chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
-              releaseName: '$(Environment.Name)'
+              releaseName: 'web-$(Environment.Name)-$(Build.BuildNumber)'
 
 - stage: prod
   displayName: Deploy to prod
@@ -148,4 +148,4 @@ stages:
               command: 'install'
               chartType: 'FilePath'
               chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
-              releaseName: '$(Environment.Name)'
+              releaseName: 'web-$(Environment.Name)-$(Build.BuildNumber)'
