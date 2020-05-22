@@ -1,9 +1,9 @@
 #!/bin/bash
-SUBSCRIPTION_ID=$subscriptionId
-RESOURCE_GROUP=$resourceGroup
-CLUSTER_NAME=$clusterName
+SUBSCRIPTION_ID=$1
+RESOURCE_GROUP=$2
+CLUSTER_NAME=$3
 NAME_SPACES=("test" "uat" "prod")
-IDENTITY_NAME="${clusterName}-podid"
+IDENTITY_NAME="${3}-podid"
 
 az aks get-credentials -n $CLUSTER_NAME -g $RESOURCE_GROUP
 
