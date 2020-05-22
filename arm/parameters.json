@@ -9,7 +9,7 @@
             "value": "southeastasia"
         },
         "dnsPrefix": {
-            "value": "aksdevops-dns"
+            "value": null
         },
         "kubernetesVersion": {
             "value": "1.16.7"
@@ -54,7 +54,7 @@
             "value": "azure"
         },
         "vnetName": {
-            "value": "aksdemo-vnet"
+            "value": null
         },
         "acrName": {
             "value": "azninja"

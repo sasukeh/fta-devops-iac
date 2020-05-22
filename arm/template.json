@@ -17,6 +17,7 @@
         },
         "dnsPrefix": {
             "type": "string",
+            "defaultValue": "[concat(parameters('clusterName'),'-dns')]",
             "metadata": {
                 "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
             }
@@ -169,6 +170,7 @@
         },
         "vnetName": {
             "type": "string",
+            "defaultValue": "[concat(parameters('clusterName'),'-vnet')]",
             "metadata": {
                 "description": "Name of Virtual network."
             }
