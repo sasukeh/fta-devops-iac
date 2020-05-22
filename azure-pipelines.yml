@@ -17,7 +17,7 @@ variables:
   resourceGroup: 'ftadevops-rg'
   clusterName: 'aksdevops'
   deployInfra: false
-  isNewCluster: false
+  isNewCluster: true
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
