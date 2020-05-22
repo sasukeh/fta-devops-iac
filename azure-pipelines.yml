@@ -78,7 +78,8 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
         scriptPath: '$(System.DefaultWorkingDirectory)/scripts/cluster_config.sh'
-
+        arguments: '$(subscriptionId) $(resourceGroup) $(clusterName)'
+    
 - stage: test
   displayName: Deploy to test
   dependsOn: Build
