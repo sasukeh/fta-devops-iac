@@ -5,6 +5,11 @@ param (
 )
 
 az aks get-credentials -n $clusterName -g $resourceGroup
+
+# Deploy aad-pod-identity
+kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/master/deploy/infra/mic-exception.yaml
+
 foreach ($namespace in $namespaces) {
+     # create namespace
      kubectl create namespace $namespace
 }

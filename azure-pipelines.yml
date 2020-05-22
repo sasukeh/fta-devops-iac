@@ -16,7 +16,6 @@ variables:
   tag: '$(Build.BuildId)'
   resourceGroup: 'ftadevops-rg'
   clusterName: 'ftademo'
-  namespaces: 'test,prod'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -26,7 +25,7 @@ pool:
 
 stages:
 - stage: Build
-  displayName: Build stage
+  displayName: Build
   jobs:  
   - job: Build
     displayName: Build
@@ -48,6 +47,7 @@ stages:
         artifact: artifacts
 
     - task: AzureResourceManagerTemplateDeployment@3
+      condition: eq(variables.deployInfra,true)
       inputs:
         deploymentScope: 'Resource Group'
         azureResourceManagerConnection: 'Victor-DevOps'
@@ -69,12 +69,9 @@ stages:
       condition: eq(variables.isNewCluster,true)
       inputs:
         azureSubscription: 'Victor-DevOps'
-        scriptType: 'pscore'
+        scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: '$(System.DefaultWorkingDirectory)/scripts/create-namespaces.ps1'
-        arguments: '$(resourceGroup) $(clusterName) $(namespaces)'
-        powerShellErrorActionPreference: 'continue'
-        failOnStandardError: true
+        scriptPath: '$(System.DefaultWorkingDirectory)/scripts/cluster_config.sh'
 
 - stage: test
   displayName: Deploy to test
@@ -102,9 +99,35 @@ stages:
               chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
               releaseName: '$(Environment.Name)'
 
+- stage: uat
+  displayName: Deploy to uat
+  dependsOn: test
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy stage
+    environment: 'uat'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: HelmInstaller@1
+            inputs:
+              helmVersionToInstall: 'latest'
+          - task: HelmDeploy@0
+            inputs:
+              connectionType: 'Azure Resource Manager'
+              azureSubscription: 'Victor-DevOps'
+              azureResourceGroup: '$(resourceGroup)'
+              kubernetesCluster: '$(clusterName)'
+              namespace: '$(Environment.Name)'
+              command: 'install'
+              chartType: 'FilePath'
+              chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
+              releaseName: '$(Environment.Name)'
+
 - stage: prod
   displayName: Deploy to prod
-  dependsOn: test
+  dependsOn: uat
   jobs:
   - deployment: Deploy
     displayName: Deploy stage
