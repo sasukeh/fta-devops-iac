@@ -67,6 +67,10 @@ stages:
       inputs:
         kubectlVersion: 'latest'
 
+    - task: HelmInstaller@1
+      inputs:
+        helmVersionToInstall: 'latest'
+
     - task: AzureCLI@2
       condition: eq(variables.isNewCluster,true)
       inputs:
@@ -86,9 +90,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: HelmInstaller@1
-            inputs:
-              helmVersionToInstall: 'latest'
           - task: HelmDeploy@0
             inputs:
               connectionType: 'Azure Resource Manager'
@@ -100,6 +101,7 @@ stages:
               chartType: 'FilePath'
               chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
               releaseName: '$(Environment.Name)'
+          
 
 - stage: uat
   displayName: Deploy to uat
@@ -112,9 +114,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: HelmInstaller@1
-            inputs:
-              helmVersionToInstall: 'latest'
           - task: HelmDeploy@0
             inputs:
               connectionType: 'Azure Resource Manager'
@@ -138,9 +137,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: HelmInstaller@1
-            inputs:
-              helmVersionToInstall: 'latest'
           - task: HelmDeploy@0
             inputs:
               connectionType: 'Azure Resource Manager'

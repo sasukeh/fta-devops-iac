@@ -12,7 +12,7 @@
             "value": "aksdemo-dns"
         },
         "kubernetesVersion": {
-            "value": "1.15.10"
+            "value": "1.16.7"
         },
         "nodeSize": {
             "value": "Standard_DS2_v2"
