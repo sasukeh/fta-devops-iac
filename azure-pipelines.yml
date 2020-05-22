@@ -15,7 +15,7 @@ variables:
   dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
   resourceGroup: 'ftadevops-rg'
-  clusterName: 'ftademo'
+  clusterName: 'aksdevops'
   deployInfra: true
   isNewCluster: true
 
