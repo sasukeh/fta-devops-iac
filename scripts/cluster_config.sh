@@ -1,7 +1,7 @@
 #!/bin/bash
 SUBSCRIPTION_ID=$subscriptionId
 RESOURCE_GROUP=$resourceGroup
-CLUSTER_NAME="$clusterName"
+CLUSTER_NAME=$clusterName
 NAME_SPACES=("test" "uat" "prod")
 IDENTITY_NAME="${clusterName}-podid"
 

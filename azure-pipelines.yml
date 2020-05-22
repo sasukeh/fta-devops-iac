@@ -16,8 +16,8 @@ variables:
   tag: '$(Build.BuildId)'
   resourceGroup: 'ftadevops-rg'
   clusterName: 'aksdevops'
-  deployInfra: true
-  isNewCluster: true
+  deployInfra: false
+  isNewCluster: false
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
