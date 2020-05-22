@@ -8,9 +8,6 @@
         "location": {
             "value": "southeastasia"
         },
-        "dnsPrefix": {
-            "value": null
-        },
         "kubernetesVersion": {
             "value": "1.16.7"
         },
@@ -52,9 +49,6 @@
         },
         "networkPolicy": {
             "value": "azure"
-        },
-        "vnetName": {
-            "value": null
         },
         "acrName": {
             "value": "azninja"
