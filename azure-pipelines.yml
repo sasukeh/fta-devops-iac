@@ -25,9 +25,9 @@ variables:
     value: 'southeeast asia'
   - name: isNewCluster
     value: true
-  # deployWith options 'arm','tarraform','ansible'
+  # deployWith options 'arm','terraform','ansible'
   - name: deployWith
-    value: 'tarraform'
+    value: 'terraform'
   - name: user
     value: 'wviriya'
   # Agent VM image name
@@ -89,7 +89,6 @@ stages:
     condition: eq(variables.deployWith,'terraform')
     steps:
     - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-      condition: eq(variables.deployWith,'Terraform')
       displayName: 'Replace tokens in **/*.tf'
       inputs:
         rootDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
