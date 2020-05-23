@@ -41,8 +41,8 @@ stages:
 - stage: Build
   displayName: Build
   jobs:  
-  - job: BuildDockerImage
-    displayName: Build
+  - job: BuildContainer
+    displayName: Build container image
     steps:
     - task: Docker@2
       displayName: Build and push an image to container registry
@@ -91,7 +91,7 @@ stages:
     - task: qetza.replacetokens.replacetokens-task.replacetokens@3
       displayName: 'Replace tokens in **/*.tf'
       inputs:
-        rootDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
+        rootDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         targetFiles: '**/*.tf'
         escapeType: none
         tokenPrefix: '__'
@@ -100,7 +100,7 @@ stages:
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
       displayName: 'Terraform : azurerm init'
       inputs:
-        workingDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         backendServiceArm: 'Victor-DevOps'
         backendAzureRmResourceGroupName: 'terraform_rg'
         backendAzureRmStorageAccountName: wviriyatfstate
@@ -111,28 +111,28 @@ stages:
       displayName: 'Terraform : azurerm plan'
       inputs:
         command: plan
-        workingDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         commandOptions: '-lock=false'
         environmentServiceNameAzureRM: 'Victor-DevOps'
         backendServiceArm: 'Victor-DevOps'
         backendAzureRmResourceGroupName: 'terraform_rg'
         backendAzureRmStorageAccountName: wviriyatfstate
-        backendAzureRmContainerName: k8stf
-        backendAzureRmKey: '$(k8s-tf)'
+        backendAzureRmContainerName: tfstate
+        backendAzureRmKey: terraform.tfstate
         continueOnError: true
     
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
       displayName: 'Terraform : azurerm apply'
       inputs:
         command: apply
-        workingDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         commandOptions: '-auto-approve -lock=false'
         environmentServiceNameAzureRM: 'Victor-DevOps'
         backendServiceArm: 'Victor-DevOps'
         backendAzureRmResourceGroupName: 'terraform_rg'
         backendAzureRmStorageAccountName: wviriyatfstate
-        backendAzureRmContainerName: k8stf
-        backendAzureRmKey: '$(k8s-tf)'
+        backendAzureRmContainerName: tfstate
+        backendAzureRmKey: terraform.tfstate
       
   # Deploy with Ansible
   - job: DeployWihtAnsible
@@ -142,7 +142,7 @@ stages:
     - task: qetza.replacetokens.replacetokens-task.replacetokens@3
       displayName: 'Replace tokens in **/*.yml'
       inputs:
-        rootDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/ansible'
+        rootDirectory: '$(System.DefaultWorkingDirectory)/ansible'
         targetFiles: '**/*.yml'
         tokenPrefix: '__'
         tokenSuffix: '__'
@@ -152,9 +152,9 @@ stages:
       inputs:
         ansibleInterface: remoteMachine
         connectionOverSsh: ansiblevm
-        playbookRootRemoteMachine: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/ansible'
+        playbookRootRemoteMachine: '$(System.DefaultWorkingDirectory)/ansible'
         playbookPathLinkedArtifactOnRemoteMachine: 'azure_create_aks.yml'
-        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/ansible/azure_create_aks.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/ansible/azure_create_aks.yml'
         inventoriesRemoteMachine: hostList
         inventoryHostListRemoteMachine: wviriyaansible.australiaeast.cloudapp.azure.com
         args: '-vvv'
