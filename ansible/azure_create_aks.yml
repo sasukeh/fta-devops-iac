@@ -1,9 +1,9 @@
 - hosts: localhost
 
   vars:
-    resource_group: __resourcegroup__
-    location: __location__
-    aks_name: __aksname__
+    resource_group: __resourceGroup__
+    location: __region__
+    aks_name: __clusterName__
     username: __user__
     ssh_key: __sshkey__
     client_id: __tf-clientid__

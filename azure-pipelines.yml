@@ -9,18 +9,30 @@ resources:
 - repo: self
 
 variables:
-
+  - group: deploymentOptions
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '708ea539-d5df-4542-8b16-d21ffe79f013'
-  dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
-  resourceGroup: 'ftadevops-rg'
-  clusterName: 'aksdevops'
-  deployInfra: false
-  isNewCluster: false
-
+  - name: dockerRegistryServiceConnection
+    value: '708ea539-d5df-4542-8b16-d21ffe79f013'
+  - name: dockerfilePath
+    value: '**/Dockerfile'
+  - name: tag
+    value: '$(Build.BuildId)'
+  - name: resourceGroup
+    value: 'ftadevops-rg'
+  - name: clusterName
+    value: 'aksdevops-tf'
+  - name:  region
+    value: 'southeeast asia'
+  - name: isNewCluster
+    value: true
+  # deployWith options 'arm','tarraform','ansible'
+  - name: deployWith
+    value: 'tarraform'
+  - name: user
+    value: 'wviriya'
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  - name: vmImageName
+    value: 'ubuntu-latest'
 
 pool:
   vmImage: $(vmImageName)
@@ -29,7 +41,7 @@ stages:
 - stage: Build
   displayName: Build
   jobs:  
-  - job: Build
+  - job: BuildDockerImage
     displayName: Build
     steps:
     - task: Docker@2
@@ -48,8 +60,16 @@ stages:
         path: $(System.DefaultWorkingDirectory)
         artifact: artifacts
 
+    - task: HelmInstaller@1
+      inputs:
+        helmVersionToInstall: 'latest'
+
+  # Deploy with ARM
+  - job: DeployWihtARM
+    displayName: Deploy to Azure wiht ARM
+    condition: eq(variables.deployWith,'arm')
+    steps:
     - task: AzureResourceManagerTemplateDeployment@3
-      condition: eq(variables.deployInfra,true)
       inputs:
         deploymentScope: 'Resource Group'
         azureResourceManagerConnection: 'Victor-DevOps'
@@ -63,16 +83,94 @@ stages:
         overrideParameters: '-clusterName $(clusterName) -doRoleAssignment $(isNewCluster)'
         deploymentMode: 'Incremental'
 
+  # Deploy with Terraform
+  - job: DeployWihtTerraform
+    displayName: Deploy to Azure wiht Terraform
+    condition: eq(variables.deployWith,'terraform')
+    steps:
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      condition: eq(variables.deployWith,'Terraform')
+      displayName: 'Replace tokens in **/*.tf'
+      inputs:
+        rootDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
+        targetFiles: '**/*.tf'
+        escapeType: none
+        tokenPrefix: '__'
+        tokenSuffix: '__'
+
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+      displayName: 'Terraform : azurerm init'
+      inputs:
+        workingDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
+        backendServiceArm: 'Victor-DevOps'
+        backendAzureRmResourceGroupName: 'terraform_rg'
+        backendAzureRmStorageAccountName: wviriyatfstate
+        backendAzureRmContainerName: tfstate
+        backendAzureRmKey: terraform.tfstate
+
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+      displayName: 'Terraform : azurerm plan'
+      inputs:
+        command: plan
+        workingDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
+        commandOptions: '-lock=false'
+        environmentServiceNameAzureRM: 'Victor-DevOps'
+        backendServiceArm: 'Victor-DevOps'
+        backendAzureRmResourceGroupName: 'terraform_rg'
+        backendAzureRmStorageAccountName: wviriyatfstate
+        backendAzureRmContainerName: k8stf
+        backendAzureRmKey: '$(k8s-tf)'
+        continueOnError: true
+    
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+      displayName: 'Terraform : azurerm apply'
+      inputs:
+        command: apply
+        workingDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/terraform'
+        commandOptions: '-auto-approve -lock=false'
+        environmentServiceNameAzureRM: 'Victor-DevOps'
+        backendServiceArm: 'Victor-DevOps'
+        backendAzureRmResourceGroupName: 'terraform_rg'
+        backendAzureRmStorageAccountName: wviriyatfstate
+        backendAzureRmContainerName: k8stf
+        backendAzureRmKey: '$(k8s-tf)'
+      
+  # Deploy with Ansible
+  - job: DeployWihtAnsible
+    displayName: Deploy to Azure wiht Ansible
+    condition: eq(variables.deployWith,'ansible')
+    steps:
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      displayName: 'Replace tokens in **/*.yml'
+      inputs:
+        rootDirectory: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/ansible'
+        targetFiles: '**/*.yml'
+        tokenPrefix: '__'
+        tokenSuffix: '__'
+    
+    - task: ms-vscs-rm.vss-services-ansible.ansible-task.Ansible@0
+      displayName: 'Run playbook'
+      inputs:
+        ansibleInterface: remoteMachine
+        connectionOverSsh: ansiblevm
+        playbookRootRemoteMachine: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/ansible'
+        playbookPathLinkedArtifactOnRemoteMachine: 'azure_create_aks.yml'
+        playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/_FabMed-Web/drop/ansible/azure_create_aks.yml'
+        inventoriesRemoteMachine: hostList
+        inventoryHostListRemoteMachine: wviriyaansible.australiaeast.cloudapp.azure.com
+        args: '-vvv'
+        failOnStdErr: false
+          
+  # Configure New Cluster      
+  - job: ConfigCluster
+    displayName: Config new AKS cluster
+    condition: eq(variables.isNewCluster,true)
+    steps:      
     - task: KubectlInstaller@0
       inputs:
         kubectlVersion: 'latest'
 
-    - task: HelmInstaller@1
-      inputs:
-        helmVersionToInstall: 'latest'
-
     - task: AzureCLI@2
-      condition: eq(variables.isNewCluster,true)
       inputs:
         azureSubscription: 'Victor-DevOps'
         scriptType: 'bash'

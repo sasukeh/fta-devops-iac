@@ -18,15 +18,15 @@ variable "dns_prefix" {
 }
 
 variable cluster_name {
-    default = "aksterraform"
+    default = "__clusterName__"
 }
 
 variable resource_group_name {
-    default = "ftademo-rg"
+    default = "__resourceGroup__"
 }
 
 variable location {
-    default = "australiasoutheast"
+    default = "__region__"
 }
 
 variable log_analytics_workspace_name {
@@ -99,7 +99,7 @@ variable "aks_agent_os_disk_size" {
 
 variable "aks_agent_count" {
   description = "The number of agent nodes for the cluster."
-  default     = 3
+  default     = 2
 }
 
 variable "aks_agent_vm_size" {
@@ -134,7 +134,7 @@ variable "aks_enable_rbac" {
 
 variable "vm_user_name" {
   description = "User name for the VM"
-  default     = "vmuser1"
+  default     = "__user__"
 }
 
 variable "tags" {
