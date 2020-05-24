@@ -208,8 +208,8 @@ stages:
               chartType: 'FilePath'
               chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
               releaseName: 'web-$(Environment.Name)-$(Build.BuildNumber)'
-          
-
+              waitForExecution: false
+       
 - stage: uat
   displayName: Deploy to uat
   dependsOn: test
@@ -233,6 +233,7 @@ stages:
               chartType: 'FilePath'
               chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
               releaseName: 'web-$(Environment.Name)-$(Build.BuildNumber)'
+              waitForExecution: false
 
 - stage: prod
   displayName: Deploy to prod
@@ -257,4 +258,5 @@ stages:
               chartType: 'FilePath'
               chartPath: '$(Pipeline.Workspace)/artifacts/charts/web'
               releaseName: 'web-$(Environment.Name)-$(Build.BuildNumber)'
+              waitForExecution: false
             
