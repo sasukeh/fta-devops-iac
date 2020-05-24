@@ -12,10 +12,10 @@ variables:
   - group: deploymentOptions
  
   - name: resourceGroup
-    value: 'ftadevops-tf2-rg'
+    value: 'ftadevops-tf-rg'
 
   - name: clusterName
-    value: 'aksdevops-tf2'
+    value: 'aksdevops-tf'
 
   - name:  region
     value: 'australiaeast'
