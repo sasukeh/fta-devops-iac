@@ -1,8 +1,8 @@
 variable "client_id" {
-    default = "__tf-clientid__"
+    default = "__aksClientId__"
 }
 variable "client_secret" {
-    default = "__tf-clientsecret__"
+    default = "__aksClientSecret__"
 }
 
 variable "agent_count" {

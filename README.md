@@ -24,5 +24,7 @@ This sample is a guide to help DevOps engineer learn ARM, Terraform and Ansible.
     - [Visual Studio](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/create-visual-studio-deployment-project)
 - [Azure Pipelines and ARM template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/add-template-to-azure-pipelines)
 - [Terraform with Azure](https://docs.microsoft.com/en-us/azure/developer/terraform/overview)
+- [Automating infrastructure deployments in the Cloud with Terraform and Azure Pipelines](https://www.azuredevopslabs.com/labs/vstsextend/terraform/)
 - [Ansible wiht Azure](https://docs.microsoft.com/en-us/azure/developer/ansible/overview)
+- [Automating infrastructure deployments in the Cloud with Ansible and Azure Pipelines](https://www.azuredevopslabs.com/labs/vstsextend/ansible/)
 - [FAQ](./faq.md)
