@@ -12,20 +12,25 @@ variables:
   - group: deploymentOptions
  
   - name: resourceGroup
-    value: 'ftadevops-tf-rg'
+    value: 'ftadevops-ansible-rg'
 
   - name: clusterName
-    value: 'aksdevops-tf'
+    value: 'aksdevops-ansible'
 
   - name:  region
     value: 'australiaeast'
 
-  - name: isNewCluster
+  # to deploy application
+  - name: isAppDeployment
+    value: true
+
+  # to deploy infrastructure
+  - name: isInfraDeployment
     value: true
 
   # deployWith options 'arm','terraform','ansible'
   - name: deployWith
-    value: 'terraform'
+    value: 'ansible'
     
   - name: user
     value: 'wviriya'
@@ -42,6 +47,7 @@ stages:
   jobs:  
   - job: BuildContainer
     displayName: Build container image
+    condition: eq(variables.isAppDeployment,true)
     steps:
     - task: Docker@2
       displayName: Build and push an image to container registry
@@ -64,10 +70,9 @@ stages:
         helmVersionToInstall: 'latest'
 
   # Deploy with ARM
-  - job: DeployWihtARM
+  - job: DeployWithARM
     displayName: Deploy to Azure wiht ARM
-    dependsOn: BuildContainer
-    condition: and(succeeded(),eq(variables.deployWith,'arm'))
+    condition: and(eq(variables.deployWith,'arm'),eq(variables.isInfraDeployment,true))
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
@@ -80,14 +85,13 @@ stages:
         templateLocation: 'Linked artifact'
         csmFile: '$(System.DefaultWorkingDirectory)/arm/template.json'
         csmParametersFile: '$(System.DefaultWorkingDirectory)/arm/parameters.json'
-        overrideParameters: '-clusterName $(clusterName) -doRoleAssignment $(isNewCluster)'
+        overrideParameters: '-clusterName $(clusterName) -doRoleAssignment $(isInfraDeployment)'
         deploymentMode: 'Incremental'
 
   # Deploy with Terraform
-  - job: DeployWihtTerraform
+  - job: DeployWithTerraform
     displayName: Deploy to Azure wiht Terraform
-    dependsOn: BuildContainer
-    condition: and(succeeded(),eq(variables.deployWith,'terraform'))
+    condition: and(eq(variables.deployWith,'terraform'),eq(variables.isInfraDeployment,true))
     steps:
     - task: qetza.replacetokens.replacetokens-task.replacetokens@3
       displayName: 'Replace tokens in **/*.tf'
@@ -135,10 +139,9 @@ stages:
         backendAzureRmKey: terraform.tfstate
       
   # Deploy with Ansible
-  - job: DeployWihtAnsible
+  - job: DeployWithAnsible
     displayName: Deploy to Azure wiht Ansible
-    dependsOn: BuildContainer
-    condition: and(succeeded(),eq(variables.deployWith,'ansible'))
+    condition: and(eq(variables.deployWith,'ansible'),eq(variables.isInfraDeployment,true))
     steps:
     - task: qetza.replacetokens.replacetokens-task.replacetokens@3
       displayName: 'Replace tokens in **/*.yml'
@@ -165,10 +168,10 @@ stages:
   - job: ConfigCluster
     displayName: Config new AKS cluster
     dependsOn:
-    - DeployWihtARM
-    - DeployWihtTerraform
-    - DeployWihtAnsible
-    condition: and(or(succeeded('DeployWihtARM'),succeeded('DeployWihtTerraform'),succeeded('DeployWihtAnsible')),eq(variables.isNewCluster,true))
+    - DeployWithARM
+    - DeployWithTerraform
+    - DeployWithAnsible
+    condition: and(or(succeeded('DeployWithARM'),succeeded('DeployWithTerraform'),succeeded('DeployWithAnsible')),eq(variables.isInfraDeployment,true))
     steps:      
     - task: KubectlInstaller@0
       inputs:
@@ -185,6 +188,7 @@ stages:
 - stage: test
   displayName: Deploy to test
   dependsOn: Build
+  condition: and(succeeded(),eq(variables.isAppDeployment,true))
   jobs:
   - deployment: Deploy
     displayName: Deploy stage
@@ -209,6 +213,7 @@ stages:
 - stage: uat
   displayName: Deploy to uat
   dependsOn: test
+  condition: and(succeeded(),eq(variables.isAppDeployment,true))
   jobs:
   - deployment: Deploy
     displayName: Deploy stage
@@ -232,6 +237,7 @@ stages:
 - stage: prod
   displayName: Deploy to prod
   dependsOn: uat
+  condition: and(succeeded(),eq(variables.isAppDeployment,true))
   jobs:
   - deployment: Deploy
     displayName: Deploy stage
