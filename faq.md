@@ -51,16 +51,22 @@ There are several options. The portal has a builtin template gallery to share te
 You should start with the standalone ARM templates at the begining. Once feel comfortable wiht the ARM templates, you may move to Blueprints. The Blueprints combined role and policy assignments together with ARM templates and Resource Groups to define a repeatable set of Azure resources that implements and adheres to an organization's standards, patterns, and requirements.
 
 ## Any Anitpatterns I should be aware of?
+DO NOT right click to deploy.
+Ensure traceability.
 
 # IaC FAQ
 ## Should I automate everything including resources I only provision once?
 You need to evaluate effort required to create deployment template. If the resource(s) are meant to be provision once, the portal can be the quickest way to deploy.
 
 ## How do I manage changes that cant be automated?
+By utilizing appropriate tooling, most changes can be automated. Otherwise, limit number of staff who can manage these changes.
 
 ## How do I choose my tooling? ARM, TerraForm, Ansible, Puppet, Chef, DSC, git etc
+It depends. By using pipelines tool such as Azure Pipelines, many of these tools can work together where its purpose fits.
 
 ## How do I manage shared resources when working with teams of teams, e.g Applicaiton Gateway or APIM
+Typically, these shared resources shold be managed with a single template/script by an appropriate team.
 
-## How do I encourage my team to start using  declaritive methods, source control and be test driven?
+## How do I encourage my team to start using declaritive methods, source control and be test driven?
+Show your team the benefit of this approach and build DevOps culture among team's memebers.
 

@@ -12,17 +12,17 @@ variables:
   - group: deploymentOptions
  
   - name: resourceGroup
-    value: 'ftadevops-arm-rg'
+    value: 'ftadevops-tf-rg'
 
   - name: clusterName
-    value: 'aksdevops-arm'
+    value: 'aksdevops-tf'
 
   - name:  region
     value: 'australiaeast'
 
   # to deploy application
   - name: isAppDeployment
-    value: true
+    value: false
 
   # to deploy infrastructure
   - name: isInfraDeployment
