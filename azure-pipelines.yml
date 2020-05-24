@@ -8,25 +8,33 @@ trigger:
 resources:
 - repo: self
 
-variables:
-  - group: deploymentOptions
-
-  - name: resourceGroup
-    value: 'ftadevops-tf-rg'
-  - name: clusterName
-    value: 'aksdevops-tf'
-  - name:  region
-    value: 'southeeast asia'
+parameters:
   - name: isNewCluster
-    value: true
+    type: boolean
+    default: false
+  - name: resourceGroup
+    type: string
+    default: 'ftadevops-tf-rg'
+  - name: clusterName
+    type: string
+    default: 'aksdevops-tf'
+  - name:  region
+    type: string
+    default: 'australiaeast'
   # deployWith options 'arm','terraform','ansible'
   - name: deployWith
-    value: 'terraform'
+    type: string
+    default: 'terraform'
   - name: user
-    value: 'wviriya'
+    type: string
+    default: 'wviriya'
   # Agent VM image name
   - name: vmImageName
-    value: 'ubuntu-latest'
+    type: string
+    default: 'ubuntu-latest'
+
+variables:
+  - group: deploymentOptions
 
 pool:
   vmImage: $(vmImageName)
@@ -61,7 +69,8 @@ stages:
   # Deploy with ARM
   - job: DeployWihtARM
     displayName: Deploy to Azure wiht ARM
-    condition: eq(variables.deployWith,'arm')
+    dependsOn: BuildContainer
+    condition: and(succeeded(),eq(variables.deployWith,'arm'))
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
@@ -70,7 +79,7 @@ stages:
         subscriptionId: '$(subscriptionId)'
         action: 'Create Or Update Resource Group'
         resourceGroupName: $(resourceGroup)
-        location: 'Southeast Asia'
+        location: $(region)
         templateLocation: 'Linked artifact'
         csmFile: '$(System.DefaultWorkingDirectory)/arm/template.json'
         csmParametersFile: '$(System.DefaultWorkingDirectory)/arm/parameters.json'
@@ -80,7 +89,8 @@ stages:
   # Deploy with Terraform
   - job: DeployWihtTerraform
     displayName: Deploy to Azure wiht Terraform
-    condition: eq(variables.deployWith,'terraform')
+    dependsOn: BuildContainer
+    condition: and(succeeded(),eq(variables.deployWith,'terraform'))
     steps:
     - task: qetza.replacetokens.replacetokens-task.replacetokens@3
       displayName: 'Replace tokens in **/*.tf'
@@ -130,7 +140,8 @@ stages:
   # Deploy with Ansible
   - job: DeployWihtAnsible
     displayName: Deploy to Azure wiht Ansible
-    condition: eq(variables.deployWith,'ansible')
+    dependsOn: BuildContainer
+    condition: and(succeeded(),eq(variables.deployWith,'ansible'))
     steps:
     - task: qetza.replacetokens.replacetokens-task.replacetokens@3
       displayName: 'Replace tokens in **/*.yml'
@@ -156,7 +167,11 @@ stages:
   # Configure New Cluster      
   - job: ConfigCluster
     displayName: Config new AKS cluster
-    condition: eq(variables.isNewCluster,true)
+    dependsOn:
+    - DeployWihtARM
+    - DeployWihtTerraform
+    - DeployWihtAnsible
+    condition: and(succeeded(),eq(variables.isNewCluster,true))
     steps:      
     - task: KubectlInstaller@0
       inputs:
