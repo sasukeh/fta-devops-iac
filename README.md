@@ -13,6 +13,7 @@ This sample is a guide to help DevOps engineer learn ARM, Terraform and Ansible.
 ## Topics
 - Azure Resource Manager (ARM) Template
     - [What is ARM?](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview)
+    - [What are ARM templates?](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/overview)
     - [Template structure and syntax](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-syntax)
     - [Template references](https://docs.microsoft.com/en-us/azure/templates/)
     - [Modularize templates](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/linked-templates)
