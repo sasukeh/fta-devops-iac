@@ -10,13 +10,7 @@ resources:
 
 variables:
   - group: deploymentOptions
-  # Container registry service connection established during pipeline creation
-  - name: dockerRegistryServiceConnection
-    value: '708ea539-d5df-4542-8b16-d21ffe79f013'
-  - name: dockerfilePath
-    value: '**/Dockerfile'
-  - name: tag
-    value: '$(Build.BuildId)'
+
   - name: resourceGroup
     value: 'ftadevops-tf-rg'
   - name: clusterName
@@ -47,12 +41,12 @@ stages:
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
+        containerRegistry: 'azninja'
+        repository: '$(imageRepository)'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
         tags: |
-          $(tag)
+          $(Build.BuildId)
           latest
 
     - task: PublishPipelineArtifact@1
@@ -112,7 +106,6 @@ stages:
       inputs:
         command: plan
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-        commandOptions: '-lock=false'
         environmentServiceNameAzureRM: 'Victor-DevOps'
         backendServiceArm: 'Victor-DevOps'
         backendAzureRmResourceGroupName: 'terraform_rg'
@@ -126,7 +119,7 @@ stages:
       inputs:
         command: apply
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-        commandOptions: '-auto-approve -lock=false'
+        commandOptions: '-auto-approve'
         environmentServiceNameAzureRM: 'Victor-DevOps'
         backendServiceArm: 'Victor-DevOps'
         backendAzureRmResourceGroupName: 'terraform_rg'
