@@ -9,7 +9,7 @@
             "value": "southeastasia"
         },
         "kubernetesVersion": {
-            "value": "1.16.7"
+            "value": "1.16.8"
         },
         "nodeSize": {
             "value": "Standard_DS2_v2"
