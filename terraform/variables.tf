@@ -30,12 +30,12 @@ variable location {
 }
 
 variable log_analytics_workspace_name {
-    default = "AksTfLogWorkspace"
+    default = "azninja-logs"
 }
 
 # refer https://azure.microsoft.com/global-infrastructure/services/?products=monitor for log analytics available regions
 variable log_analytics_workspace_location {
-    default = "southeastasia"
+    default = "australiaeast"
 }
 
 # refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing 
