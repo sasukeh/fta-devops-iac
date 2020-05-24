@@ -10,19 +10,26 @@ resources:
 
 variables:
   - group: deploymentOptions
-  - name: isNewCluster
-    value: false
+ 
   - name: resourceGroup
     value: 'ftadevops-tf-rg'
+
   - name: clusterName
     value: 'aksdevops-tf'
+
   - name:  region
     value: 'australiaeast'
+
+  - name: isNewCluster
+    value: true
+
   # deployWith options 'arm','terraform','ansible'
   - name: deployWith
     value: 'terraform'
+    
   - name: user
     value: 'wviriya'
+
   # Agent VM image name
   - name: vmImageName
     value: 'ubuntu-latest'
