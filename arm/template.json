@@ -236,7 +236,7 @@
         }
     },
     "variables": {
-        "workspaceName": "[if(empty(parameters('workspaceName')),concat(parameters('clusterName'),'Workspace',guid(resourceGroup().id)),parameters('workspaceName'))]",
+        "workspaceName": "[if(empty(parameters('workspaceName')),concat(parameters('clusterName'),'Workspace',guid(subscription().id)),parameters('workspaceName'))]",
         "omsWorkspaceId": "[resourceId(parameters('omsResourceGroup'),'microsoft.operationalinsights/workspaces',variables('workspaceName'))]"
     },
     "resources": [
