@@ -29,7 +29,7 @@ variables:
 
   # to deploy infrastructure
   - name: isInfraDeployment
-    value: true
+    value: false
 
   # deployWith options 'arm','terraform','ansible'
   - name: deployWith
