@@ -12,10 +12,10 @@ variables:
   - group: deploymentOptions
  
   - name: resourceGroup
-    value: 'ftadevops-tf-rg'
+    value: 'ftadevops-arm-rg'
 
   - name: clusterName
-    value: 'aksdevops-tf'
+    value: 'aksdevops-arm'
 
   - name:  region
     value: 'australiaeast'
@@ -30,7 +30,7 @@ variables:
 
   # deployWith options 'arm','terraform','ansible'
   - name: deployWith
-    value: 'terraform'
+    value: 'arm'
     
   - name: user
     value: 'wviriya'
