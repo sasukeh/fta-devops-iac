@@ -20,6 +20,9 @@ variables:
   - name:  region
     value: 'australiaeast'
 
+  - name:  k8sVersion
+    value: '1.16.8'
+
   # to deploy application
   - name: isAppDeployment
     value: false
@@ -85,7 +88,7 @@ stages:
         templateLocation: 'Linked artifact'
         csmFile: '$(System.DefaultWorkingDirectory)/arm/template.json'
         csmParametersFile: '$(System.DefaultWorkingDirectory)/arm/parameters.json'
-        overrideParameters: '-clusterName $(clusterName) -doRoleAssignment $(isInfraDeployment) -location $(region) -workspaceRegion $(region)'
+        overrideParameters: '-clusterName $(clusterName) -doRoleAssignment $(isInfraDeployment) -location $(region) -workspaceRegion $(region) -kubernetesVersion $(k8sVersion)'
         deploymentMode: 'Incremental'
 
   # Deploy with Terraform

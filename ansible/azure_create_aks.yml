@@ -8,7 +8,7 @@
     ssh_key: __sshkey__
     client_id: __aksClientId__
     client_secret: __aksClientSecret__
-    aks_version: 1.16.8
+    aks_version: __k8sVersion__
 
   tasks:
     - name: Create resource group

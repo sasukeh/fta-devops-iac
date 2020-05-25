@@ -1,6 +1,6 @@
 provider "azurerm" {
   # whilst the `version` attribute is optional, we recommend pinning to a given version of the Provider
-  version = "=2.0.0"
+  version = ">=2.0.0"
   features {}
 }
 
@@ -37,7 +37,7 @@ resource "azurerm_virtual_network" "test" {
   }
 
   subnet {
-    name           = "appgwsubnet"
+    name           = local.app_gateway_subnet_name
     address_prefix = var.app_gateway_subnet_address_prefix
   }
 
@@ -53,7 +53,7 @@ data "azurerm_subnet" "kubesubnet" {
 }
 
 data "azurerm_subnet" "appgwsubnet" {
-  name                 = "appgwsubnet"
+  name                 = local.app_gateway_subnet_name
   virtual_network_name = azurerm_virtual_network.test.name
   resource_group_name  = azurerm_resource_group.k8s.name
 
