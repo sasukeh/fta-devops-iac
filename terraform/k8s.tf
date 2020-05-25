@@ -134,10 +134,6 @@ resource "azurerm_application_gateway" "network" {
   depends_on = [azurerm_virtual_network.test, azurerm_public_ip.test]
 }
 
-resource "random_id" "log_analytics_workspace_name_suffix" {
-    byte_length = 8
-}
-
 resource "azurerm_log_analytics_workspace" "test" {
     # The WorkSpace name has to be unique across the whole of azure, not just the current subscription/tenant.
     name                = "${var.cluster_name}-${var.log_analytics_workspace_name}"
