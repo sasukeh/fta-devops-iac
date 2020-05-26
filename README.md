@@ -37,11 +37,14 @@ This sample is a guide to help DevOps engineer learn ARM, Terraform and Ansible.
 ## Terraform with Azure
 - [Overview](https://docs.microsoft.com/en-us/azure/developer/terraform/overview)
 - [Terraform Quickstart](https://docs.microsoft.com/en-us/azure/developer/terraform/install-configure)
+- [Terraform Configuration Language](https://www.terraform.io/docs/configuration/syntax.html)
+- [Store Terraform state in Azure Storage](https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage)
 - [Automating infrastructure deployments in the Cloud with Terraform and Azure Pipelines](https://www.azuredevopslabs.com/labs/vstsextend/terraform/)
 
 ## Ansible wiht Azure
-- [Overvieww](https://docs.microsoft.com/en-us/azure/developer/ansible/overview)
+- [Overview](https://docs.microsoft.com/en-us/azure/developer/ansible/overview)
 - [Ansible Quickstart](https://docs.microsoft.com/en-us/azure/developer/ansible/install-on-linux-vm)  
+- [Ansible Playbooks](https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html)
 - [Automating infrastructure deployments in the Cloud with Ansible and Azure Pipelines](https://www.azuredevopslabs.com/labs/vstsextend/ansible/)
 
 ## [FAQ](./faq.md)
